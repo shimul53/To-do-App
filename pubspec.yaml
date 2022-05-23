@@ -37,6 +37,7 @@ dependencies:
   flutter_staggered_animations:
   flutter_overboard: ^3.1.0
   shared_preferences: ^2.0.15
+  google_fonts:
 
 
 dev_dependencies:

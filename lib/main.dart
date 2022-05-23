@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todo_app/database/database_helper.dart';
 import 'package:todo_app/services/theme_services.dart';
 import 'package:todo_app/ui/home_page.dart';
 import 'package:todo_app/ui/onboarding_page.dart';
 import 'package:todo_app/ui/theme.dart';
 
- int? initScreen;
+int? initScreen;
+
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  await DatabaseHelper.initDatabase();
   SharedPreferences preferences = await SharedPreferences.getInstance();
   initScreen = await preferences.getInt('initScreen');
   await preferences.setInt('initScreen', 1);
