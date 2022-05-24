@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:todo_app/database/database_helper.dart';
 import 'package:todo_app/models/taskModel.dart';
 
@@ -31,4 +32,10 @@ class TaskController extends GetxController{
     await DatabaseHelper.update(id);
     getTasks();
   }
+
+  /*void taskUpdate( TaskModel taskModel)async{
+    await DatabaseHelper.updateData(taskModel);
+    getTasks();
+  }*/
+
 }

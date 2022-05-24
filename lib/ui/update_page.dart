@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:todo_app/ui/theme.dart';
 class UpdatePage extends StatelessWidget {
-
+   final String
   const UpdatePage({Key? key,}) : super(key: key);
 
   @override
@@ -44,7 +44,7 @@ class UpdatePage extends StatelessWidget {
                     Row(
                       children: [
                         SizedBox(width: 40,),
-                        Text("Hi Shimul",
+                        Text(this.label.toString().split("|")[0],
                           style: TextStyle(color: Colors.white,fontSize: 16),),
                       ],
 
@@ -68,7 +68,7 @@ class UpdatePage extends StatelessWidget {
                     Row(
                       children: [
                         SizedBox(width: 40,),
-                        Text("I am a developer",
+                        Text(this.label.toString().split("|")[1],
                           style: TextStyle(color: Colors.white,fontSize: 16),),
                       ],
 
@@ -91,7 +91,7 @@ class UpdatePage extends StatelessWidget {
                     Row(
                       children: [
                         SizedBox(width: 40,),
-                        Text("23-05-2022",
+                        Text(this.label.toString().split("|")[2],
                           style: TextStyle(color: Colors.white,fontSize: 16),),
                       ],
 
@@ -115,7 +115,7 @@ class UpdatePage extends StatelessWidget {
                       children: [
                         SizedBox(width: 40,),
                         Text(
-                          "10:00 - 11:00",
+                          "${this.label.toString().split("|")[3]} - ${this.label.toString().split("|")[4]} ",
                           style: TextStyle(color: Colors.white,fontSize: 16),),
 
 
@@ -141,7 +141,7 @@ class UpdatePage extends StatelessWidget {
                       children: [
                         SizedBox(width: 40,),
                         Text(
-                          "5 Minutes early",
+                          "${this.label.toString().split("|")[5]} Minutes early",
                           style: TextStyle(color: Colors.white,fontSize: 16),),
 
 
@@ -167,7 +167,7 @@ class UpdatePage extends StatelessWidget {
                       children: [
                         SizedBox(width: 40,),
                         Text(
-                          "10 min",
+                          this.label.toString().split("|")[6],
                           style: TextStyle(color: Colors.white,fontSize: 16),),
 
 
@@ -180,6 +180,54 @@ class UpdatePage extends StatelessWidget {
             ),
           )),
         ),
+      ),
+    );
+  }
+}*/
+
+import 'package:flutter/material.dart';
+import 'package:todo_app/models/taskModel.dart';
+
+
+
+class UpdatePage extends StatelessWidget {
+  const UpdatePage({
+    Key? key,
+    required this.data,
+    required this.edit,
+    required this.index,
+    required this.delete,
+  }) : super(key: key);
+  final TaskModel data;
+  final Function edit;
+  final Function delete;
+
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        leading: CircleAvatar(
+          child: IconButton(
+              onPressed: () {
+                edit(index);
+              },
+              icon: Icon(Icons.edit)),
+        ),
+        title: Text(data.title.toString()),
+        subtitle: Text(data.note.toString()),
+        trailing: CircleAvatar(
+            backgroundColor: Colors.red,
+            child: IconButton(
+              icon: Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                delete(index);
+              },
+            )),
       ),
     );
   }

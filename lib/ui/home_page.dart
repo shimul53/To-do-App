@@ -8,10 +8,13 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:todo_app/controllers/task_conntroller.dart';
+import 'package:todo_app/database/database_helper.dart';
 import 'package:todo_app/models/taskModel.dart';
 import 'package:todo_app/services/theme_services.dart';
 import 'package:todo_app/ui/add_task_bar.dart';
+import 'package:todo_app/ui/search_page.dart';
 import 'package:todo_app/ui/theme.dart';
 import 'package:todo_app/ui/update_page.dart';
 import 'package:todo_app/ui/widgets/button.dart';
@@ -28,12 +31,30 @@ class _HomePageState extends State<HomePage> {
 
   final _taskController = Get.put(TaskController());
 
+  TextEditingController titleController = TextEditingController();
+  TextEditingController noteController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController startTimeController = TextEditingController();
+  TextEditingController endTimeController = TextEditingController();
+  TextEditingController repeatController = TextEditingController();
+  TextEditingController remindController = TextEditingController();
+
+  List<TaskModel> datas = [];
+  bool fetching = true;
+  int currentIndex = 0;
+
+ late DatabaseHelper db;
+  late final int index;
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
     _taskController.getTasks();
+    db = DatabaseHelper();
+
 
 
   }
@@ -116,7 +137,7 @@ class _HomePageState extends State<HomePage> {
             Spacer(),
             task.isCompleted ==1?Container():_bottomSheetButton(label: "Task Completed", onTap: (){_taskController.markTaskCompleted(task.id!); Get.back();}, color:primaryClr,context:context ),
             SizedBox(height: 10,),
-            _bottomSheetButton(label: "Update", onTap: (){Get.to(()=>UpdatePage( )); }, color:Color(0xFF66BB6A)!,context:context ),
+            _bottomSheetButton(label: "Update", onTap: (){updateDialogue(task); }, color:Color(0xFF66BB6A)!,context:context ),
             SizedBox(height: 10,),
             _bottomSheetButton(label: "Delete Task", onTap: (){_taskController.delete(task); Get.back();}, color:Colors.red[300]!,context:context ),
             SizedBox(height: 10,),
@@ -235,9 +256,110 @@ class _HomePageState extends State<HomePage> {
         child: Icon(Get.isDarkMode? Icons.wb_sunny_outlined : Icons.nightlight_round,size: 20,color: Get.isDarkMode? Colors.white:Colors.black,),
       ),
       actions: [
-        Icon(Get.isDarkMode? Icons.search : Icons.search,size: 25,color: Get.isDarkMode? Colors.white:Colors.black,),
+        GestureDetector(onTap:(){
+          Get.to(()=> SearchPage());
+        },child: Icon(Get.isDarkMode? Icons.search : Icons.search,size: 25,color: Get.isDarkMode? Colors.white:Colors.black,)),
         SizedBox(width: 20,)
       ],
     );
+  }
+
+
+  void updateDialogue(TaskModel task) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            contentPadding: EdgeInsets.all(14),
+            content: Container(
+              height: 430,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: titleController,
+                      decoration: InputDecoration(labelText: "Title"),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    TextFormField(
+                      controller: noteController,
+                      decoration: InputDecoration(labelText: "Description"),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    TextFormField(
+                      controller: dateController,
+                      decoration: InputDecoration(labelText: "Date"),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    TextFormField(
+                      controller: startTimeController ,
+                      decoration: InputDecoration(labelText: "Time"),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    TextFormField(
+                      controller: endTimeController ,
+                      decoration: InputDecoration(labelText: "Time"),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    TextFormField(
+                      controller: remindController,
+                      decoration: InputDecoration(labelText: "Remind"),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                    TextFormField(
+                      controller: repeatController,
+                      decoration: InputDecoration(labelText: "Repeat"),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  TaskModel taskModel = datas[currentIndex];
+                  taskModel.title = noteController.text;
+                  taskModel.note = titleController.text;
+                  taskModel.date=dateController.text;
+                  taskModel.startTime=startTimeController.text;
+                  taskModel.endTime=endTimeController.text;
+                  taskModel.repeat= repeatController.text;
+                  taskModel.remind=remindController.text as int? ;
+                  db.updateData(taskModel);
+                  setState(() {});
+                  Navigator.pop(context);
+                },
+
+                child: Text("Update"),
+              ),
+            ],
+          );
+        });
+  }
+  void edit(index) {
+    currentIndex = index;
+    titleController.text = datas[index].title!;
+    noteController.text = datas[index].note!;
+    dateController.text = datas[index].date!;
+    startTimeController.text=datas[index].startTime!;
+    endTimeController.text=datas[index].endTime!;
+    repeatController.text=datas[index].repeat!;
+    remindController.text =datas[index].remind! as String ;
+    updateDialogue(index);
   }
 }

@@ -30,6 +30,12 @@ class DatabaseHelper{
       print(e);
     }
   }
+
+  Future<List<TaskModel>?> getItems()async{
+    var items = await _database!.query(_tableName,orderBy: 'id');
+    List<TaskModel> itemList = items.isNotEmpty?items.map((e) => TaskModel.fromJson(e)).toList():[];
+    return itemList;
+  }
   static Future<int> insert(TaskModel? task) async{
     print("insert function called");
     return await _database?.insert(_tableName,task!.toJson())??1 ;
@@ -50,5 +56,10 @@ class DatabaseHelper{
       SET isCompleted = ?
       WHERE id =?
     ''',[1,id]);
+  }
+
+  Future<int> updateData(TaskModel taskModel) async{
+
+    return await  _database!.update(_tableName, taskModel.toJson(), where: "id=?", whereArgs: [taskModel.id]);
   }
 }
